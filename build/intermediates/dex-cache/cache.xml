@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-22.2.0_8737d1d80176fb3585231c304ee87d6b65eb0652.jar" />
+    </item>
+    <item
+        jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="e158bc35e39c0461eee47e19088c1a0ccf00d1ae">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\instant-run_f5c533d5a004aa8e3b60398384333818b2e5e8aa.jar" />
+    </item>
+    <item
+        jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.1.0\jars\classes.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="4477ea44f5ec5ad064022a22691732d7638ff197">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-appindexing-8.1.0_ef6ff525b81b70f8ab5badd6705bfc07dd716f2c.jar" />
+    </item>
+    <item
+        jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.3\jars\classes.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-21.0.3_0567d901e97bfb9215da762d3372069155c50ac2.jar" />
+    </item>
+    <item
+        jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\jars\classes.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-basement-8.1.0_7f845f395c225b8694e54f80d9bce84ef14feff6.jar" />
+    </item>
+    <item
+        jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\libs\internal_impl-22.2.0.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0_aa3958a1ac7d0089275c79342427deefb8d4d80e.jar" />
+    </item>
+    <item
+        jar="C:\Users\juang\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.0_2d4d741570b75c0686911cb45b954bd2e4a4810b.jar" />
+    </item>
+    <item
+        jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="51f6fabfd36fd0920640d569dc7efa9438851bcb">
+        <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_d122ca5508cbacb9e42b16f57847a26a5fdc37af.jar" />
+    </item>
+
+</items>
