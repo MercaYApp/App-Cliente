@@ -1,4 +1,4 @@
-package cosw.mercayappcelador;
+package cosw.mercayapp;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,4 +1,4 @@
-package cosw.mercayappcelador;
+package cosw.mercayapp;
 
 import android.content.Intent;
 import android.os.Bundle;

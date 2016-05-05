@@ -1,13 +1,10 @@
-package cosw.mercayappcelador;
+package cosw.mercayapp;
 
-import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
@@ -282,7 +279,7 @@ public class GetProductsActivity extends ActionBarActivity {
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://cosw.mercayappcelador/http/host/path")
+                Uri.parse("android-app://cosw.mercayapp/http/host/path")
         );
         AppIndex.AppIndexApi.start(client2, viewAction);
     }
@@ -300,7 +297,7 @@ public class GetProductsActivity extends ActionBarActivity {
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://cosw.mercayappcelador/http/host/path")
+                Uri.parse("android-app://cosw.mercayapp/http/host/path")
         );
         AppIndex.AppIndexApi.end(client2, viewAction);
         client2.disconnect();

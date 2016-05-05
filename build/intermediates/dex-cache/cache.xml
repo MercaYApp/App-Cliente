@@ -12,7 +12,7 @@
         jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         revision="21.1.2"
-        sha1="e158bc35e39c0461eee47e19088c1a0ccf00d1ae">
+        sha1="7f78e9704029f13c81970cb7ee65f2a876bbf7bd">
         <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\instant-run_f5c533d5a004aa8e3b60398384333818b2e5e8aa.jar" />
     </item>
     <item
@@ -54,7 +54,7 @@
         jar="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         revision="21.1.2"
-        sha1="51f6fabfd36fd0920640d569dc7efa9438851bcb">
+        sha1="86f98c76762f4c4ac3a74da4793622dc9dc15fe5">
         <dex dex="C:\Users\juang\Desktop\App-Cliente\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_d122ca5508cbacb9e42b16f57847a26a5fdc37af.jar" />
     </item>
 
