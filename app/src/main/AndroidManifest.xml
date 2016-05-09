@@ -19,12 +19,23 @@
         </activity>
 
         <activity
-            android:name="cosw.mercayapp.GetProductsActivity"
+            android:name="cosw.mercayapp.GetProducts"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="cosw.mercayapp.TestBarCode"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="cosw.mercayapp.GetFacturas"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="cosw.mercayapp.GetCarrito"
+            android:label="@string/app_name" >
         </activity>
 
         <meta-data

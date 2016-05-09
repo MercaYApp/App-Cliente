@@ -4,10 +4,14 @@ package cosw.mercayapp;
 import java.util.EnumMap;
 import java.util.Map;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -16,46 +20,34 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 public class TestBarCode extends ActionBarActivity {
-
+    private String barcode_data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_barcode);
-/*
-        LinearLayout l = new LinearLayout(this);
-        l.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        l.setOrientation(LinearLayout.VERTICAL);
-
-        setContentView(l);*/
-
+        Intent intent = getIntent();
+        barcode_data=intent.getStringExtra("codigo");
         // barcode data
-        String barcode_data = "123456";
+//        barcode_data = "123456";
 
         // barcode image
         Bitmap bitmap = null;
-        //ImageView iv = new ImageView(this);
         ImageView iv = (ImageView)findViewById(R.id.imgBarCode);
-
+        TextView textoCodigo = (TextView)findViewById(R.id.numeroCodigoDeBarras);
         try {
-
             bitmap = encodeAsBitmap(barcode_data, BarcodeFormat.CODE_128, 600, 300);
             iv.setImageBitmap(bitmap);
+            textoCodigo.setText(barcode_data);
 
-        } catch (WriterException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //l.addView(iv);
+    }
 
-        //barcode text
-
-        /*TextView tv = new TextView(this);
-        tv.setGravity(Gravity.CENTER_HORIZONTAL);
-        tv.setText(barcode_data);
-        */
-
-        //l.addView(tv);
-        //setContentView(R.layout.activity_create_barcode);
+    public void onClick(View v){
+        Intent i = new Intent(this, GetFacturas.class);
+        startActivity(i);
     }
 
     /**************************************************************
@@ -114,5 +106,6 @@ public class TestBarCode extends ActionBarActivity {
         }
         return null;
     }
+
 
 }

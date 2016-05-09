@@ -43,7 +43,7 @@ import java.io.InputStreamReader;
 /**
  * Created by Felipe Gomez on 30/4/2016.
  */
-public class GetProductsActivity extends ActionBarActivity {
+public class GetProducts extends ActionBarActivity {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -52,21 +52,27 @@ public class GetProductsActivity extends ActionBarActivity {
     private TableLayout tl;
     private JSONArray ja = null;
     private JSONObject jo = null;
-    private Button scanBtn;
+    private Button scanBtn, btnAddCarrito;
     private double totalVenta, totalPeso = 0;
     private String idFactura = "";
     private boolean error = false;
+    private Cliente cliente;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.get_products);
-        inicializarCampos();
         client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        //traer cliente Singleton
+        cliente=Cliente.demeDatos();
+//        mensaje(""+cliente.getUser() + " PASSWORD:  "+cliente.getPassword());
+        inicializarCampos();
     }
 
     private void inicializarCampos(){
         //Se Instancia el botón de Scan
         scanBtn = (Button)findViewById(R.id.scanButton);
+        btnAddCarrito = (Button)findViewById(R.id.btnAddCarrito);
     }
 
     /**
@@ -79,7 +85,6 @@ public class GetProductsActivity extends ActionBarActivity {
         TableLayout t1 = null;
         tl = (TableLayout) findViewById(R.id.main_table);
         tl.removeViews(1, tl.getChildCount()-1); //Eliminar anterior consulta de factura
-        poblarDatosFactura();
         TableRow tr_head = new TableRow(this);
         tr_head.setId(new Integer(0));
         tr_head.setBackgroundColor(Color.GRAY);
@@ -114,95 +119,11 @@ public class GetProductsActivity extends ActionBarActivity {
         tl.addView(tr_head, new TableLayout.LayoutParams(
                 TableRow.LayoutParams.FILL_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
-    }
-
-    /**
-     * Listar los productos asociados a la factura
-     */
-    private void poblarDatosTotal(){
-        TableRow tr_head = new TableRow(this);
-        tr_head.setId(new Integer(4));
-        tr_head.setBackgroundColor(Color.GRAY);
-        tr_head.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.FILL_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT));
-
-        TextView label_void = new TextView(this);
-        label_void.setId(new Integer(5));
-        label_void.setText("TOTAL");
-        label_void.setTextColor(Color.WHITE);
-        label_void.setTypeface(null, Typeface.BOLD);
-        label_void.setPadding(5, 5, 5, 5);
-        tr_head.addView(label_void);// add the column to the table row here
-
-        TextView label_venta = new TextView(this);
-        label_venta.setId(new Integer(6));// define id that must be unique
-        label_venta.setText(totalVenta+""); // set the text for the header
-        label_venta.setTextColor(Color.WHITE); // set the color
-        label_venta.setTypeface(null, Typeface.BOLD);
-        label_venta.setPadding(5, 5, 5, 5); // set the padding (if required)
-        tr_head.addView(label_venta); // add the column to the table row here
-
-        TextView label_peso = new TextView(this);
-        label_peso.setId(new Integer(7));// define id that must be unique
-        label_peso.setText(totalPeso+""); // set the text for the header
-        label_peso.setTextColor(Color.WHITE); // set the color
-        label_peso.setTypeface(null, Typeface.BOLD);
-        label_peso.setPadding(5, 5, 5, 5); // set the padding (if required)
-        tr_head.addView(label_peso); // add the column to the table row here
-
-        tl.addView(tr_head, new TableLayout.LayoutParams(
-                TableRow.LayoutParams.FILL_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT));
 
     }
 
-    /**
-     * Agrega los datos de la factura al informe
-     * @throws JSONException
-     */
-    private void poblarDatosFactura() throws JSONException {
-        TableRow tr1 = new TableRow(this);
-        tr1.setId(new Integer(8));
+    private void poblarTablaProducto() throws JSONException {
 
-        tr1.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.FILL_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT));
-        //Agregar numero ID de factura
-        TextView labelDatosFactura = new TextView(this);
-        labelDatosFactura.setId(new Integer(9));
-        labelDatosFactura.setText("DATOS DE FACTURA: ");
-        labelDatosFactura.setTextColor(Color.parseColor("#40BBCB"));
-        labelDatosFactura.setTypeface(null, Typeface.BOLD);
-        labelDatosFactura.setPadding(2, 0, 5, 0);
-        tr1.addView(labelDatosFactura);
-        //Agregar numero ID de factura
-        TextView labelIdFactura = new TextView(this);
-        labelIdFactura.setId(new Integer(10));
-        labelIdFactura.setText(jo.getString("idInvoices"));
-        labelIdFactura.setTextColor(Color.parseColor("#40BBCB"));
-        labelIdFactura.setTypeface(null, Typeface.BOLD);
-        labelIdFactura.setPadding(2, 0, 5, 0);
-        tr1.addView(labelIdFactura);
-        //Agregar fecha de factura
-        TextView labelFechaFactura = new TextView(this);
-        labelFechaFactura.setId(new Integer(11));
-        labelFechaFactura.setText(jo.getString("dateInvoice"));
-        labelFechaFactura.setTextColor(Color.parseColor("#40BBCB"));
-        labelFechaFactura.setTypeface(null, Typeface.BOLD);
-        labelFechaFactura.setPadding(2, 0, 5, 0);
-        tr1.addView(labelFechaFactura);
-
-        tl.addView(tr1, new TableLayout.LayoutParams(
-                TableRow.LayoutParams.FILL_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT));
-    }
-
-    private void poblarTabla() throws JSONException {
-
-        for (int i= 0; i<ja.length(); i++) {
-            //Crear el objeto json extraido
-            JSONObject jo = (JSONObject)ja.getJSONObject(i);
             String id = jo.getString("idProductos");
             String nombre = jo.getString("nameProduct");
             int precio = jo.getInt("buyPrice");
@@ -213,25 +134,27 @@ public class GetProductsActivity extends ActionBarActivity {
             totalVenta+=precioVenta;
             // Create the table row
             TableRow tr = new TableRow(this);
-            if(i%2!=0) tr.setBackgroundColor(Color.parseColor("#40BBCB"));
-            tr.setId(new Integer(200+i));
+//            if(i%2!=0) tr.setBackgroundColor(Color.parseColor("#40BBCB"));
+//            tr.setId(new Integer(200+i));
+            tr.setId(new Integer(200));
+
 
             tr.setLayoutParams(new TableRow.LayoutParams(
                     TableRow.LayoutParams.FILL_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT));
 
             TextView labelNombre = new TextView(this);
-            labelNombre.setId(new Integer(300+i));
+            labelNombre.setId(new Integer(201));
             labelNombre.setText(nombre);
             tr.addView(labelNombre);
 
             TextView labelPrecio = new TextView(this);
-            labelPrecio.setId(new Integer(400+i));
+            labelPrecio.setId(new Integer(202));
             labelPrecio.setText(precioVenta+"");
             tr.addView(labelPrecio);
 
             TextView labelId = new TextView(this);
-            labelId.setId(new Integer(500+i));
+            labelId.setId(new Integer(203));
             labelId.setText(peso+"");
             labelId.setPadding(2, 0, 5, 0);
             tr.addView(labelId);
@@ -240,8 +163,9 @@ public class GetProductsActivity extends ActionBarActivity {
             tl.addView(tr, new TableLayout.LayoutParams(
                     TableRow.LayoutParams.FILL_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT));
-        }
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -253,12 +177,21 @@ public class GetProductsActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.escanearFactura) {
-            Intent intent = new Intent(this, GetProductsActivity.class);
+        if (id == R.id.escanearProducto) {
+            Intent intent = new Intent(this, GetProducts.class);
             startActivity(intent);
         }
         if (id == R.id.inicio) {
+            cliente=new Cliente();
             Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+        if(id == R.id.consultarFacturas){
+            Intent intent = new Intent(this, GetFacturas.class);
+            startActivity(intent);
+        }
+        if (id == R.id.consultarCarrito) {
+            Intent intent = new Intent(this, GetCarrito.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -303,6 +236,10 @@ public class GetProductsActivity extends ActionBarActivity {
         client2.disconnect();
     }
 
+    /**
+     * Escanear producto
+     * @param v
+     */
     public void onClick(View v){
         //Se responde al evento click
         if(v.getId()==R.id.scanButton){
@@ -310,6 +247,20 @@ public class GetProductsActivity extends ActionBarActivity {
             IntentIntegrator scanIntegrator = new IntentIntegrator(this);
             //Se procede con el proceso de scaneo
             scanIntegrator.initiateScan();
+        }
+    }
+
+    /**
+     * Agregar al carrito de compras del cliente
+     * @param v
+     */
+    public void agregarAlCarrito(View v){
+        if(jo!=null) {
+            cliente.addListaProductos(jo);
+            mensaje("Se ha agregado correctamente al carrito");
+//            mensaje(cliente.getListaProductos().toString());
+        }else{
+            mensaje("No hay productos para agregar al carrito");
         }
     }
 
@@ -343,7 +294,7 @@ public class GetProductsActivity extends ActionBarActivity {
     public void buscarFactura(String id) throws JSONException {
         tl = null;
         GetFacturaAsync factura = new GetFacturaAsync();
-        String url = "http://mercayapp1.herokuapp.com/invoices/"+id;
+        String url = "http://mercayapp1.herokuapp.com/products/"+id;
         factura.execute(url);
         if(error==true){
             mensaje("Error en la autenticación");
@@ -355,15 +306,15 @@ public class GetProductsActivity extends ActionBarActivity {
     /**
      * Hace get del producto en el API
      */
-    private class GetFacturaAsync extends AsyncTask<String, Integer, JSONArray> {
-        protected JSONArray doInBackground(String... url) {
+    private class GetFacturaAsync extends AsyncTask<String, Integer, JSONObject> {
+        protected JSONObject doInBackground(String... url) {
             StringBuilder builder = new StringBuilder();
 
             try {
                 Intent intent = getIntent();
                 HttpClient client = new DefaultHttpClient();
                 HttpGet httpGet = new HttpGet(url[0]);
-                httpGet.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(intent.getStringExtra("user"), intent.getStringExtra("password")), "UTF-8", false));
+                httpGet.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(cliente.getUser(), cliente.getPassword()), "UTF-8", false));
                 HttpResponse response = client.execute(httpGet);
                 StatusLine statusLine = response.getStatusLine();
                 HttpEntity entity = response.getEntity();
@@ -376,36 +327,36 @@ public class GetProductsActivity extends ActionBarActivity {
                     builder.append(line);
                 }
                 jo = new JSONObject(builder.toString());
-                ja = jo.getJSONArray("productses");
+                //ja = jo.getJSONArray("productses");
             } catch (Exception e){
                 e.printStackTrace();
                 error=true;
-                Log.e(GetProductsActivity.class.toString(),
+                Log.e(GetProducts.class.toString(),
                         "GET request failed " + e.getLocalizedMessage());
             }
-            return ja;
+            return jo;
+            //return ja;
         }
 
         protected void onProgressUpdate(Integer... progress) {
             mensaje("Enviando mensaje");
         }
 
-        protected void onPostExecute(JSONArray result) {
+        protected void onPostExecute(JSONObject result) {
             try {
                 if(jo!=null) {
-
                     crearTabla();
-                    poblarTabla();
-                    poblarDatosTotal();
+                    poblarTablaProducto();
                     mensaje("Ya se cargaron todos los productos de la factura!");
                 }else {
-                    mensaje("NO SE HA ENCONTRADO FACTURA");
-                    Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                    v.vibrate(3000);
+                    mensaje("NO SE HA ENCONTRADO FACTURAaaaaaaaaa");
+
                 }
 
             } catch (JSONException e) {
-
+                mensaje("NO SE HA ENCONTRADO FACTURA");
+                Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                v.vibrate(3000);
                 e.printStackTrace();
             }
         }

@@ -11,16 +11,29 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
 
-        <Button
-            android:layout_width="96dp"
-            android:layout_height="60dp"
-            android:text="@string/escanearFactura"
-            android:id="@+id/scanButton"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.06"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:onClick="onClick" />
+        <TableRow>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="@string/escanearProductos"
+                android:id="@+id/scanButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0.06"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:onClick="onClick" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="@string/agregarAlCarrito"
+                android:id="@+id/btnAddCarrito"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0.06"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:onClick="agregarAlCarrito" />
+        </TableRow>
     </TableLayout>
 
 </ScrollView>
