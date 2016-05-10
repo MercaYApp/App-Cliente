@@ -81,7 +81,10 @@ public class GetFacturas  extends ActionBarActivity {
             startActivity(intent);
         }
         if (id == R.id.inicio) {
-            cliente=new Cliente();
+            cliente.setNombre("");
+            cliente.setPassword("");
+            cliente.setUser("");
+            cliente.setListaProductos(new JSONArray());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }

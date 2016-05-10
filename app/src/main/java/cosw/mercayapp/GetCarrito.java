@@ -1,6 +1,7 @@
 package cosw.mercayapp;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -85,10 +87,20 @@ public class GetCarrito extends ActionBarActivity {
             startActivity(intent);
         }
         if (id == R.id.inicio) {
-            cliente=new Cliente();
+            cliente.setNombre("");
+            cliente.setPassword("");
+            cliente.setUser("");
+            cliente.setListaProductos(new JSONArray());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-            cliente=new Cliente();
+        }
+        if(id == R.id.consultarFacturas){
+            Intent intent = new Intent(this, GetFacturas.class);
+            startActivity(intent);
+        }
+        if (id == R.id.consultarCarrito) {
+            Intent intent = new Intent(this, GetCarrito.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -132,7 +144,7 @@ public class GetCarrito extends ActionBarActivity {
         client2.disconnect();
     }
 
-    public void pagar(View v){
+    public void pagar(){
         mensajeAlerta("Pagar", "¿Seguro desea pagar?");
     }
 
@@ -145,7 +157,7 @@ public class GetCarrito extends ActionBarActivity {
         totalPeso = 0;
         TableLayout t1 = null;
         tl = (TableLayout) findViewById(R.id.tableFacturas);
-//        tl.removeViews(0, tl.getChildCount()-1); //Eliminar anterior consulta de factura
+        tl.removeAllViews(); //Elimina tablos para que no se muestren repetidos
         TableRow tr_head = new TableRow(this);
         tr_head.setId(new Integer(0));
         tr_head.setBackgroundColor(Color.GRAY);
@@ -153,14 +165,22 @@ public class GetCarrito extends ActionBarActivity {
                 TableRow.LayoutParams.FILL_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
 
-/*        TextView label_Id= new TextView(this);
-        label_Id.setId(new Integer(1));// define id that must be unique
-        label_Id.setText("ID"); // set the text for the header
-        label_Id.setTextColor(Color.WHITE); // set the color
-        label_Id.setTypeface(null, Typeface.BOLD);
-        label_Id.setPadding(5, 5, 5, 5); // set the padding (if required)
-        tr_head.addView(label_Id); // add the column to the table row here
-*/
+        Button btnPagar = new Button(this);
+        btnPagar.setId(new Integer(2));// define id that must be unique
+        btnPagar.setText("PAGAR"); // set the text for the header
+        btnPagar.setTextColor(Color.WHITE); // set the color
+        btnPagar.setTypeface(null, Typeface.BOLD);
+        btnPagar.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, 60));
+        btnPagar.setTextSize(20);
+        btnPagar.setPadding(5, 5, 5, 5); // set the padding (if required)
+        btnPagar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pagar();
+            }
+        });
+        tl.addView(btnPagar);
+
         TextView label_Fecha = new TextView(this);
         label_Fecha.setId(new Integer(2));// define id that must be unique
         label_Fecha.setText("NOMBRE"); // set the text for the header
@@ -211,12 +231,7 @@ public class GetCarrito extends ActionBarActivity {
             tr.setLayoutParams(new TableRow.LayoutParams(
                     TableRow.LayoutParams.FILL_PARENT,
                     1));
-/*
-            TextView labelId = new TextView(this);
-            labelId.setId(new Integer(300+i));
-            labelId.setText(id);
-            tr.addView(labelId);
-*/
+
             TextView labelDate = new TextView(this);
             labelDate.setId(new Integer(400+i));
             labelDate.setText(nombre);
@@ -277,9 +292,16 @@ public class GetCarrito extends ActionBarActivity {
         alertDialog.setTitle(""+msjTit);
         alertDialog.setMessage(""+msj);
 
-        alertDialog.setButton("Aceptar", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                mensaje("Aqui manda a la nueva actividad donde paga");
+                mensaje("ACEPTO Aqui manda a la nueva actividad donde paga y genera factura");
+                //Aqui deberia pagar y luego hacer el post de los productos, para generar una factura
+
+            }
+        });
+        alertDialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                mensaje("CANCELO");
             }
         });
         alertDialog.show();
