@@ -246,6 +246,17 @@ public class GetCarrito extends ActionBarActivity {
             labelPeso.setId(new Integer(600+i));
             labelPeso.setText(peso+"");
             tr.addView(labelPeso);
+            tr.setPadding(20,20,20,20);
+            tr.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v)
+                {
+                    try {
+                        mensajeAlertaEliminar("Eliminar del carrito", "¿Realmente desea elminar el producto del carrito?", jo.getString("idProductos"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             // finally add this to the table row
             tl.addView(tr, new TableLayout.LayoutParams(
@@ -307,5 +318,34 @@ public class GetCarrito extends ActionBarActivity {
         alertDialog.show();
     }
 
+    //MOSTRAR MENSAJES ELIMINAR DEL CARRITO
+    private  void mensajeAlertaEliminar(String msjTit, String msj, final String producto){
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(""+msjTit);
+        alertDialog.setMessage(""+msj);
+
+        alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                mensaje("ACEPTO Aqui manda a la nueva actividad donde elimina producto del carrito de compras");
+                try {
+                    mensaje("Quiere eliminar : "+producto);
+                    Log.d("Quiere eliminar;", "Pero antesde eliminar");
+                    cliente.eliminarDeListaProductos(producto);
+                    mensaje("ELIMINOOOO  EL : "+producto);
+                    buscarCarrito();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //Aqui deberia pagar y luego hacer el post de los productos, para generar una factura
+
+            }
+        });
+        alertDialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                mensaje("CANCELO");
+            }
+        });
+        alertDialog.show();
+    }
 
 }
