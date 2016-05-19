@@ -32,8 +32,13 @@ import org.apache.http.StatusLine;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -145,7 +150,25 @@ public class GetCarrito extends ActionBarActivity {
     }
 
     public void pagar(){
-        mensajeAlerta("Pagar", "¿Seguro desea pagar?");
+        mensajeAlertaPagar("Pagar", "¿Seguro desea pagar?");
+        JSONObject jso=new JSONObject();
+        try {
+            jso.put("numeroTarjeta","5105105105105100");
+            jso.put("codigoSeguridad","123");
+            jso.put("tipo","MASTER");
+            jso.put("nombreCliente","carlos ardila");
+            jso.put("cuentaDestino","2789817823-bancolombia");
+            jso.put("descripcion","pago prueba");
+            jso.put("montoTransaccion","1200");
+            mensaje("PAGAR : "+jso);
+
+            PostAsyncTask postProduct = new PostAsyncTask();
+            postProduct.execute(jso);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("OBJETO JSON", jso.toString());
     }
 
     /**
@@ -298,7 +321,7 @@ public class GetCarrito extends ActionBarActivity {
     }
 
     //MOSTRAR MENSAJES
-    private  void mensajeAlerta(String msjTit, String msj){
+    private  void mensajeAlertaPagar(String msjTit, String msj){
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(""+msjTit);
         alertDialog.setMessage(""+msj);
@@ -306,7 +329,7 @@ public class GetCarrito extends ActionBarActivity {
         alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 mensaje("ACEPTO Aqui manda a la nueva actividad donde paga y genera factura");
-                //Aqui deberia pagar y luego hacer el post de los productos, para generar una factura
+
 
             }
         });
@@ -326,18 +349,18 @@ public class GetCarrito extends ActionBarActivity {
 
         alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                mensaje("ACEPTO Aqui manda a la nueva actividad donde elimina producto del carrito de compras");
                 try {
                     mensaje("Quiere eliminar : "+producto);
                     Log.d("Quiere eliminar;", "Pero antesde eliminar");
                     cliente.eliminarDeListaProductos(producto);
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
                     mensaje("ELIMINOOOO  EL : "+producto);
                     buscarCarrito();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //Aqui deberia pagar y luego hacer el post de los productos, para generar una factura
-
             }
         });
         alertDialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
@@ -346,6 +369,44 @@ public class GetCarrito extends ActionBarActivity {
             }
         });
         alertDialog.show();
+    }
+
+    private class PostAsyncTask extends AsyncTask<JSONObject, Integer, String> {
+        protected String doInBackground(JSONObject... pago) {
+            DefaultHttpClient dhhtpc=new DefaultHttpClient();
+            String reqResponse="";
+            try {
+                HttpPost postreq=new HttpPost("http://paymentsgateway.herokuapp.com/rest/payments");
+                postreq.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(cliente.getUser(),cliente.getPassword()), "UTF-8", false));
+
+                //agregar la versión textual del documento jSON a la petición
+                StringEntity se= null;
+                se = new StringEntity(pago[0].toString());
+
+                se.setContentType("application/json;charset=UTF-8");
+                se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+                postreq.setEntity(se);
+
+                //ejecutar la petición
+                HttpResponse httpr=dhhtpc.execute(postreq);
+
+                //Para obtener la respuesta:
+                reqResponse= EntityUtils.toString(httpr.getEntity());
+                Log.d("CARRITO: ", reqResponse.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("ERROR", "Error en el post");
+            }
+            return reqResponse;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        protected void onPostExecute(String result) {
+            Toast.makeText(getApplicationContext(), "YA ACABO DE PUBLICAR",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
 }

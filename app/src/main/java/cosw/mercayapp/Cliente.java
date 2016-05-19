@@ -1,5 +1,6 @@
 package cosw.mercayapp;
 
+import android.location.Address;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -79,17 +80,17 @@ public class Cliente {
     }
 
     public void eliminarDeListaProductos(String producto) throws JSONException {
-        Log.d("Si entro ", "antes del for: "+getListaProductos().length());
         boolean banderita=false;
-        for(int i=0; i<getListaProductos().length() && !banderita; i++){
-            if(getListaProductos().getJSONObject(i).getString("idProductos").equals(producto)){
+        JSONArray copiaLista = getListaProductos();
+        for(int i=0; i<copiaLista.length() && !banderita; i++){
+            if(copiaLista.getJSONObject(i).getString("idProductos").equals(producto)){
                 Log.d("Elimino: ", "Quiere elminar:"+ producto);
-                getListaProductos().put(i);
+                copiaLista.remove(0);
                 banderita=true;
             }else{
                 Log.d("NO elimino: ", "producto");
             }
-            Log.d("ENTRO: ", ""+getListaProductos().getJSONObject(i));
+            Log.d("ENTRO: ", ""+copiaLista.getJSONObject(i));
         }
     }
 
