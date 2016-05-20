@@ -1,5 +1,8 @@
 package cosw.mercayapp;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
@@ -8,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -55,6 +59,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
     private double longitud;
     private boolean ubicado=false;
     private Context context = this;
+    private View progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +79,8 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
         campoUser = (EditText)findViewById(R.id.campoUser);
         campoPassword = (EditText)findViewById(R.id.campoPassword);
         btnIngresar = (Button)findViewById(R.id.btnIngresar);
+        progress = findViewById(R.id.login_progress);
     }
-
 
     /**
      * Accion que se realizara al darle clic en ingresar
@@ -94,10 +99,10 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
             cliente=Cliente.demeDatos();
             cliente.setUser(user);
             cliente.setPassword(password);
-            Intent intent = new Intent(this, GetProducts.class);
+            /*Intent intent = new Intent(this, GetProducts.class);
             intent.putExtra("user", user);
             intent.putExtra("password", password);
-            startActivity(intent);
+            startActivity(intent);*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -108,15 +113,13 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
         toast1.show();
     }
 
-
-
-
     /**
      * carga los datos del cliente que esté intentando logearse
      * @param id
      * @throws JSONException
      */
     public void buscarCliente(String id) throws JSONException {
+        showProgress(true);
         GetClienteAsync cli = new GetClienteAsync();
         String url = "http://mercayapp1.herokuapp.com/clientsApp/"+id;
         cli.execute(url);
@@ -202,6 +205,12 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
             if (error == true) {
                 mensaje("Error en la autenticación");
             } else {
+                Intent intent = new Intent(context, GetProducts.class);
+                intent.putExtra("user", user);
+                intent.putExtra("password", password);
+                startActivity(intent);
+
+                showProgress(false);
                 mensaje("Bienvenido!");
             }
         }
@@ -215,6 +224,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
             JSONObject tienda = new JSONObject();
             double distancia;
             try {
+                //No hace nada hasta que tenga la localizacion
                 while(!ubicado) {
                 }
                 String obj = obj = "http://mercayapp1.herokuapp.com/stores";
@@ -247,25 +257,18 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
                     localizacionTiendas.setLongitude(tienda.getDouble("longitud"));
                     distancia=localizacionActual.distanceTo(localizacionTiendas);
 
-
                     tienda.put("distancia",distancia);
                     tiendasRespuesta.put(tienda);
                 }
 
                 tiendasRespuesta=sortArray(tiendasRespuesta);
-
-
-
-
-
-
             } catch (Exception e){
                 e.printStackTrace();
                 error=true;
                 Log.e(GetProducts.class.toString(),
                         "GET request failed " + e.getLocalizedMessage());
             }
-            return ja;
+            return tiendasRespuesta;
         }
 
         protected void onProgressUpdate(Integer... progress) {
@@ -274,27 +277,12 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
 
         protected void onPostExecute(JSONArray result) {
             try {
-                mensaje("ESTA ES LA RESPUESTA DE ORDENAR TIENDAS: "+result);
-                /*if(ja!=null) {
-                    crearTabla();
-                    poblarTabla();
-                    mensaje("Ya se cargaron todas las facturas!");
-                }else {
-                    mensaje("NO SE HAN ENCONTRADO FACTURAS");
-                    Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                    v.vibrate(3000);
-                }*/
-
+                mensaje("ESTÁ EN LA TIENDA: "+result.getJSONObject(0).getString("nameStore"));
             } catch (Exception e) {
-
                 e.printStackTrace();
             }
         }
     }
-
-
-
-
 
 
     private JSONArray sortArray(JSONArray jsonArr) throws JSONException {
@@ -339,6 +327,44 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
         }
         return sortedJsonArray;
     }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            /*
+            viewReposterias.setVisibility(show ? View.GONE : View.VISIBLE);
+            viewReposterias.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    viewReposterias.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });*/
+
+            progress.setVisibility(show ? View.VISIBLE : View.GONE);
+            progress.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    progress.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            progress.setVisibility(show ? View.VISIBLE : View.GONE);
+            progress.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
 
 
 }

@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 
 /**
  * Created by Felipe Brasil on 9/5/2016.
@@ -150,8 +151,9 @@ public class GetCarrito extends ActionBarActivity {
     }
 
     public void pagar(){
-        mensajeAlertaPagar("Pagar", "¿Seguro desea pagar?");
+        mensaje("Quiere pagar: "+cliente.getPrecio());
         JSONObject jso=new JSONObject();
+
         try {
             jso.put("numeroTarjeta","5105105105105100");
             jso.put("codigoSeguridad","123");
@@ -160,8 +162,9 @@ public class GetCarrito extends ActionBarActivity {
             jso.put("cuentaDestino","2789817823-bancolombia");
             jso.put("descripcion","pago prueba");
             jso.put("montoTransaccion","1200");
-            mensaje("PAGAR : "+jso);
+            mensaje("PAGAR : "+cliente.getPrecio());
 
+            //Hacer Post del pago
             PostAsyncTask postProduct = new PostAsyncTask();
             postProduct.execute(jso);
 
@@ -199,7 +202,7 @@ public class GetCarrito extends ActionBarActivity {
         btnPagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pagar();
+                mensajeAlertaPagar("Pagar", "¿Seguro desea pagar?");
             }
         });
         tl.addView(btnPagar);
@@ -209,7 +212,7 @@ public class GetCarrito extends ActionBarActivity {
         label_Fecha.setText("NOMBRE"); // set the text for the header
         label_Fecha.setTextColor(Color.WHITE); // set the color
         label_Fecha.setTypeface(null, Typeface.BOLD);
-        label_Fecha.setPadding(5, 5, 5, 5); // set the padding (if required)
+        //label_Fecha.setPadding(5, 5, 5, 5); // set the padding (if required)
         tr_head.addView(label_Fecha); // add the column to the table row here
 
         TextView label_precio = new TextView(this);
@@ -217,7 +220,7 @@ public class GetCarrito extends ActionBarActivity {
         label_precio.setText("PRECIO"); // set the text for the header
         label_precio.setTextColor(Color.WHITE); // set the color
         label_precio.setTypeface(null, Typeface.BOLD);
-        label_precio.setPadding(5, 5, 5, 5); // set the padding (if required)
+        //label_precio.setPadding(5, 5, 5, 5); // set the padding (if required)
         tr_head.addView(label_precio); // add the column to the table row here
 
         TextView label_peso = new TextView(this);
@@ -225,7 +228,7 @@ public class GetCarrito extends ActionBarActivity {
         label_peso.setText("PESO"); // set the text for the header
         label_peso.setTextColor(Color.WHITE); // set the color
         label_peso.setTypeface(null, Typeface.BOLD);
-        label_peso.setPadding(5, 5, 5, 5); // set the padding (if required)
+        //label_peso.setPadding(5, 5, 5, 5); // set the padding (if required)
         tr_head.addView(label_peso); // add the column to the table row here
 
         tl.addView(tr_head, new TableLayout.LayoutParams(
@@ -273,11 +276,11 @@ public class GetCarrito extends ActionBarActivity {
             tr.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v)
                 {
-                    try {
-                        mensajeAlertaEliminar("Eliminar del carrito", "¿Realmente desea elminar el producto del carrito?", jo.getString("idProductos"));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    mensajeAlertaEliminar("Eliminar del carrito", "¿Realmente desea elminar el producto "+jo.getString("idProductos")+" del carrito?", jo.getString("idProductos"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 }
             });
 
@@ -329,8 +332,7 @@ public class GetCarrito extends ActionBarActivity {
         alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 mensaje("ACEPTO Aqui manda a la nueva actividad donde paga y genera factura");
-
-
+                pagar();
             }
         });
         alertDialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
@@ -349,18 +351,17 @@ public class GetCarrito extends ActionBarActivity {
 
         alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                try {
-                    mensaje("Quiere eliminar : "+producto);
-                    Log.d("Quiere eliminar;", "Pero antesde eliminar");
-                    cliente.eliminarDeListaProductos(producto);
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                    mensaje("ELIMINOOOO  EL : "+producto);
-                    buscarCarrito();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            try {
+                Log.d("Quiere eliminar;", "Pero antesde eliminar");
+                cliente.eliminarDeListaProductos(producto);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+                mensaje("ELIMINOOOO  EL : "+producto);
+                buscarCarrito();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             }
         });
         alertDialog.setButton(Dialog.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
@@ -404,9 +405,59 @@ public class GetCarrito extends ActionBarActivity {
         }
 
         protected void onPostExecute(String result) {
+            JSONObject jsoInvoice=new JSONObject();
+            try {
+                jsoInvoice.put("idInvoices", 0);
+                jsoInvoice.put("dateInvoices", new Date());
+                jsoInvoice.put("productses", cliente.getListaProductos());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            //Hacer post del Invoice
+            PostAsyncInvoice postInvoice = new PostAsyncInvoice();
+            postInvoice.execute(jsoInvoice);
             Toast.makeText(getApplicationContext(), "YA ACABO DE PUBLICAR",
                     Toast.LENGTH_LONG).show();
         }
     }
 
+
+
+    private class PostAsyncInvoice extends AsyncTask<JSONObject, Integer, String> {
+        protected String doInBackground(JSONObject... pago) {
+            DefaultHttpClient dhhtpc=new DefaultHttpClient();
+            String reqResponse="";
+            try {
+                HttpPost postreq=new HttpPost("http://mercayapp1.herokuapp.com/invoices");
+                postreq.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(cliente.getUser(),cliente.getPassword()), "UTF-8", false));
+
+                //agregar la versión textual del documento jSON a la petición
+                StringEntity se= null;
+                se = new StringEntity(pago[0].toString());
+
+                se.setContentType("application/json;charset=UTF-8");
+                se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+                postreq.setEntity(se);
+
+                //ejecutar la petición
+                HttpResponse httpr=dhhtpc.execute(postreq);
+
+                //Para obtener la respuesta:
+                reqResponse= EntityUtils.toString(httpr.getEntity());
+                Log.d("invoice: ", reqResponse.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("ERROR", "Error en el post de invoice al pagar");
+            }
+            return reqResponse;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        protected void onPostExecute(String result) {
+            Toast.makeText(getApplicationContext(), "YA ACABO DE PUBLICAR",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 }

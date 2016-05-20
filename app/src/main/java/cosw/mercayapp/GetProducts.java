@@ -54,7 +54,7 @@ public class GetProducts extends ActionBarActivity {
     private JSONObject jo = null;
     private Button scanBtn, btnAddCarrito;
     private double totalVenta, totalPeso = 0;
-    private String idFactura = "";
+    private String idProducto = "";
     private boolean error = false;
     private Cliente cliente;
     @Override
@@ -84,7 +84,7 @@ public class GetProducts extends ActionBarActivity {
         totalPeso = 0;
         TableLayout t1 = null;
         tl = (TableLayout) findViewById(R.id.main_table);
-        tl.removeViews(1, tl.getChildCount()-1); //Eliminar anterior consulta de factura
+        tl.removeViews(1, tl.getChildCount()-1); //Eliminar anterior consulta de producto
         TableRow tr_head = new TableRow(this);
         tr_head.setId(new Integer(0));
         tr_head.setBackgroundColor(Color.GRAY);
@@ -274,9 +274,9 @@ public class GetProducts extends ActionBarActivity {
             //Quiere decir que se obtuvo resultado pro lo tanto:
             //Desplegamos en pantalla el contenido del código de barra scaneado
             String scanContent = scanningResult.getContents();
-            idFactura = scanContent;
+            idProducto= scanContent;
             try {
-                buscarFactura(idFactura);
+                buscarProducto(idProducto);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -290,15 +290,15 @@ public class GetProducts extends ActionBarActivity {
     }
 
     /**
-     * Buscar en el API la factura con el id escaneado del código de barras
+     * Buscar en el API la producto con el id escaneado del código de barras
      * @param id
      * @throws JSONException
      */
-    public void buscarFactura(String id) throws JSONException {
+    public void buscarProducto(String id) throws JSONException {
         tl = null;
-        GetFacturaAsync factura = new GetFacturaAsync();
+        GetProductoAsync producto = new GetProductoAsync();
         String url = "http://mercayapp1.herokuapp.com/products/"+id;
-        factura.execute(url);
+        producto.execute(url);
         if(error==true){
             mensaje("Error en la autenticación");
             Intent i = new Intent(this, MainActivity.class);
@@ -309,7 +309,7 @@ public class GetProducts extends ActionBarActivity {
     /**
      * Hace get del producto en el API
      */
-    private class GetFacturaAsync extends AsyncTask<String, Integer, JSONObject> {
+    private class GetProductoAsync extends AsyncTask<String, Integer, JSONObject> {
         protected JSONObject doInBackground(String... url) {
             StringBuilder builder = new StringBuilder();
 
@@ -350,14 +350,14 @@ public class GetProducts extends ActionBarActivity {
                 if(jo!=null) {
                     crearTabla();
                     poblarTablaProducto();
-                    mensaje("Ya se cargaron todos los productos de la factura!");
+                    mensaje("Ya se cargaron todos los productos del producto!");
                 }else {
-                    mensaje("NO SE HA ENCONTRADO FACTURAaaaaaaaaa");
+                    mensaje("NO SE HA ENCONTRADO PRODUCTOoo");
 
                 }
 
             } catch (JSONException e) {
-                mensaje("NO SE HA ENCONTRADO FACTURA");
+                mensaje("NO SE HA ENCONTRADO EL PRODUCTO");
                 Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 v.vibrate(3000);
                 e.printStackTrace();

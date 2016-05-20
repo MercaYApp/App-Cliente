@@ -25,6 +25,8 @@ public class Cliente {
         this.setPassword(password);
         this.setListaProductos(listaProductos);
     }
+    private double precio=0;
+    private double peso=0;
 
     public Cliente(){
         listaProductos=new JSONArray();
@@ -84,17 +86,57 @@ public class Cliente {
         JSONArray copiaLista = getListaProductos();
         for(int i=0; i<copiaLista.length() && !banderita; i++){
             if(copiaLista.getJSONObject(i).getString("idProductos").equals(producto)){
-                Log.d("Elimino: ", "Quiere elminar:"+ producto);
-                copiaLista.remove(0);
+                Log.d("Elimino: ", "Quiere elminar:"+ producto+ " i: "+i);
+                copiaLista.remove(i);
                 banderita=true;
-            }else{
+            }/*else{
                 Log.d("NO elimino: ", "producto");
-            }
-            Log.d("ENTRO: ", ""+copiaLista.getJSONObject(i));
+            }*/
         }
+        setPeso();
+        setPrecio();
     }
 
     public void addListaProductos(JSONObject producto) {
+        setPrecio();
+        setPeso();
         this.listaProductos.put(producto);
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio() {
+        JSONArray lista =new JSONArray();
+        lista = getListaProductos();
+        for(int i=0; i<lista.length(); i++){
+            try {
+                double compra = lista.getJSONObject(i).getDouble("buyPrice");
+                double porcentaje = lista.getJSONObject(i).getDouble("percentage");
+                double venta = compra*(1+(porcentaje/100));
+                Log.d("CLIENTE precio: ", ""+precio+ " i: "+i);
+                precio+= venta;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d("Precio: ", ""+precio);
+    }
+
+    public double getPeso() {
+        return peso;
+    }
+
+    public void setPeso() {
+        peso=0;
+        JSONArray lista = getListaProductos();
+        for(int i=0; i<lista.length(); i++){
+            try {
+                peso+=lista.getJSONObject(i).getDouble("weight");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

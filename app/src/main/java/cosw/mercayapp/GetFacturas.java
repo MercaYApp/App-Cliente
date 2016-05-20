@@ -169,14 +169,6 @@ public class GetFacturas  extends ActionBarActivity {
         label_Fecha.setPadding(5, 5, 5, 5); // set the padding (if required)
         tr_head.addView(label_Fecha); // add the column to the table row here
 
-        TextView label_precio = new TextView(this);
-        label_precio.setId(new Integer(3));// define id that must be unique
-        label_precio.setText("CONSULTAR"); // set the text for the header
-        label_precio.setTextColor(Color.WHITE); // set the color
-        label_precio.setTypeface(null, Typeface.BOLD);
-        label_precio.setPadding(5, 5, 5, 5); // set the padding (if required)
-        tr_head.addView(label_precio); // add the column to the table row here
-
         tl.addView(tr_head, new TableLayout.LayoutParams(
                 TableRow.LayoutParams.FILL_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
@@ -207,12 +199,10 @@ public class GetFacturas  extends ActionBarActivity {
             TextView labelDate = new TextView(this);
             labelDate.setId(new Integer(400+i));
             labelDate.setText(fecha);
+            tr.setPadding(20,20,20,20);
             tr.addView(labelDate);
 
-            final Button btnConsultar = new Button(this);
-            btnConsultar.setId(new Integer(500+i));
-            btnConsultar.setText("Codigo de barras");
-            btnConsultar.setOnClickListener(new View.OnClickListener() {
+            tr.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v)
                 {
                     try {
@@ -222,9 +212,6 @@ public class GetFacturas  extends ActionBarActivity {
                     }
                 }
             });
-            tr.addView(btnConsultar);
-
-
 
             // finally add this to the table row
             tl.addView(tr, new TableLayout.LayoutParams(
