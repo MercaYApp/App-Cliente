@@ -19,14 +19,15 @@ public class Cliente {
     private String password;
     private JSONArray listaProductos;
     private static Cliente cliente;
+    private double precio=0;
+    private double peso=0;
+
     public Cliente(String nombre, String user, String password, JSONArray listaProductos){
         this.setNombre(nombre);
         this.setUser(user);
         this.setPassword(password);
         this.setListaProductos(listaProductos);
     }
-    private double precio=0;
-    private double peso=0;
 
     public Cliente(){
         listaProductos=new JSONArray();
@@ -108,6 +109,7 @@ public class Cliente {
     }
 
     public void setPrecio() {
+        precio=0;
         JSONArray lista =new JSONArray();
         lista = getListaProductos();
         for(int i=0; i<lista.length(); i++){

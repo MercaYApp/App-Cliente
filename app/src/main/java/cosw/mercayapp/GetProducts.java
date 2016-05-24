@@ -276,6 +276,7 @@ public class GetProducts extends ActionBarActivity {
             String scanContent = scanningResult.getContents();
             idProducto= scanContent;
             try {
+                error = false;
                 buscarProducto(idProducto);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -296,13 +297,14 @@ public class GetProducts extends ActionBarActivity {
      */
     public void buscarProducto(String id) throws JSONException {
         tl = null;
+        jo = null;
         GetProductoAsync producto = new GetProductoAsync();
         String url = "http://mercayapp1.herokuapp.com/products/"+id;
         producto.execute(url);
         if(error==true){
-            mensaje("Error en la autenticación");
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
+            mensaje("No se ha encontrado producto");
+            //Intent i = new Intent(this, MainActivity.class);
+            //startActivity(i);
         }
     }
 
@@ -352,6 +354,7 @@ public class GetProducts extends ActionBarActivity {
                     poblarTablaProducto();
                     mensaje("Ya se cargaron todos los productos del producto!");
                 }else {
+                    crearTabla();
                     mensaje("NO SE HA ENCONTRADO PRODUCTOoo");
 
                 }

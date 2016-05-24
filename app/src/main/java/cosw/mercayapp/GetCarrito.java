@@ -2,6 +2,7 @@ package cosw.mercayapp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -46,6 +47,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -60,6 +63,7 @@ public class GetCarrito extends ActionBarActivity {
     private Cliente cliente;
     private double totalVenta, totalPeso = 0;
     private boolean error = false;
+    private Context context = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +75,7 @@ public class GetCarrito extends ActionBarActivity {
             buscarCarrito();
             crearTabla();
             poblarTabla();
-            mensaje("HA POBLADO CORRECTAMENTE");
+            mensaje("Se han cargado correctamente el carrito!");
         } catch (JSONException e) {
             mensaje("ERRORRRRRRRRRRR");
             e.printStackTrace();
@@ -158,11 +162,11 @@ public class GetCarrito extends ActionBarActivity {
             jso.put("numeroTarjeta","5105105105105100");
             jso.put("codigoSeguridad","123");
             jso.put("tipo","MASTER");
-            jso.put("nombreCliente","carlos ardila");
+            jso.put("nombreCliente", cliente.getNombre());
             jso.put("cuentaDestino","2789817823-bancolombia");
-            jso.put("descripcion","pago prueba");
-            jso.put("montoTransaccion","1200");
-            mensaje("PAGAR : "+cliente.getPrecio());
+            jso.put("descripcion","pago factura: ");
+            jso.put("montoTransaccion", cliente.getPrecio());
+            //mensaje("PAGAR : "+cliente.getPrecio());
 
             //Hacer Post del pago
             PostAsyncTask postProduct = new PostAsyncTask();
@@ -173,6 +177,7 @@ public class GetCarrito extends ActionBarActivity {
         }
         Log.d("OBJETO JSON", jso.toString());
     }
+
 
     /**
      * Crear estructura de la tabla
@@ -238,7 +243,7 @@ public class GetCarrito extends ActionBarActivity {
     }
 
     private void poblarTabla() throws JSONException {
-        for (int i= 0; i<ja.length(); i++) {
+        for (int i = 0; i<ja.length(); i++) {
             //Crear el objeto json extraido
             jo = (JSONObject)ja.getJSONObject(i);
             String id = jo.getString("idProductos");
@@ -305,7 +310,6 @@ public class GetCarrito extends ActionBarActivity {
     public void buscarCarrito() throws JSONException {
         tl = null;
         ja=cliente.getListaProductos();
-        mensaje(ja.toString());
         if(error==true){
             mensaje("Error en la autenticación");
             Intent i = new Intent(this, MainActivity.class);
@@ -319,7 +323,7 @@ public class GetCarrito extends ActionBarActivity {
      * @param mensaje
      */
     private void mensaje(String mensaje) {
-        Toast toast1 = Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT);
+        Toast toast1 = Toast.makeText(context, mensaje, Toast.LENGTH_SHORT);
         toast1.show();
     }
 
@@ -373,7 +377,7 @@ public class GetCarrito extends ActionBarActivity {
     }
 
     private class PostAsyncTask extends AsyncTask<JSONObject, Integer, String> {
-        protected String doInBackground(JSONObject... pago) {
+        protected String doInBackground(    JSONObject... pago) {
             DefaultHttpClient dhhtpc=new DefaultHttpClient();
             String reqResponse="";
             try {
@@ -406,22 +410,30 @@ public class GetCarrito extends ActionBarActivity {
 
         protected void onPostExecute(String result) {
             JSONObject jsoInvoice=new JSONObject();
+            final Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(System.currentTimeMillis());
+            Date date = cal.getTime();
+
             try {
-                jsoInvoice.put("idInvoices", 0);
-                jsoInvoice.put("dateInvoices", new Date());
+                /*jsoInvoice.put("idInvoices", "");*/
+                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                String fecha = format1.format(date);
+                jsoInvoice.put("dateInvoice", fecha);
                 jsoInvoice.put("productses", cliente.getListaProductos());
+                Log.d("PUT INVOICE:::", "DAte: "+fecha+ " Productses: "+cliente.getListaProductos());
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.d("ERROR POST", e.toString());
+
             }
             //Hacer post del Invoice
+            Log.d("POST INVOICE", jsoInvoice+"");
             PostAsyncInvoice postInvoice = new PostAsyncInvoice();
             postInvoice.execute(jsoInvoice);
-            Toast.makeText(getApplicationContext(), "YA ACABO DE PUBLICAR",
-                    Toast.LENGTH_LONG).show();
+
+            crearCodigoDeBarras("2016005");
+
         }
     }
-
-
 
     private class PostAsyncInvoice extends AsyncTask<JSONObject, Integer, String> {
         protected String doInBackground(JSONObject... pago) {

@@ -87,6 +87,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
      * @param v
      */
     public void ingresar(View v) {
+        error = false;
         user = campoUser.getText().toString();
         password = campoPassword.getText().toString();
         try {
@@ -94,7 +95,6 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
             geoLocalizacion.execute();
 
             buscarCliente(user);
-//            mensaje("Usuario: "+user+" \nPassword: "+password);
 
             cliente=Cliente.demeDatos();
             cliente.setUser(user);
@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
     }
 
     private void mensaje(String mensaje) {
-        Toast toast1 = Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT);
+        Toast toast1 = Toast.makeText(context, mensaje, Toast.LENGTH_SHORT);
         toast1.show();
     }
 
@@ -142,9 +142,9 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
+        ubicado=true;
         latitud= location.getLatitude();
         longitud= location.getLongitude();
-        ubicado=true;
     }
 
     @Override
@@ -225,8 +225,9 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
             double distancia;
             try {
                 //No hace nada hasta que tenga la localizacion
-                while(!ubicado) {
-                }
+                /*while(!ubicado) {
+                    mensaje("Buscando ubicación actual.");
+                }*/
                 String obj = obj = "http://mercayapp1.herokuapp.com/stores";
                 HttpClient client = new DefaultHttpClient();
                 HttpGet httpGet = new HttpGet(obj);
